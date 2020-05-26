@@ -1,0 +1,690 @@
+Microsoft Windows [Version 10.0.18363.836]
+(c) 2019 Microsoft Corporation. All rights reserved.
+
+C:\Users\Admin>mysql -u root -p
+Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 17
+Server version: 8.0.20 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| bank_accounts_mng  |
+| car_showroom       |
+| classicmodels      |
+| information_schema |
+| librarymanager     |
+| mysql              |
+| performance_schema |
+| sakila             |
+| sys                |
+| testdatabase       |
+| world              |
++--------------------+
+11 rows in set (0.00 sec)
+
+mysql> create database products;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use products;
+Database changed
+mysql> drop database products;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create database demo;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use demo;
+Database changed
+mysql> create table products(
+    -> id int auto_increments primary key;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'auto_increments primary key' at line 2
+mysql> create table products(
+    -> id int auto_increment primary key;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 2
+mysql> create table products(
+    -> id int auto_increment primary key,
+    -> productCode varchar(50) unique,
+    -> productName varchar(100) not null,
+    -> productPrice int(11) not null,
+    -> productAmount smallint not null,
+    -> productDescription text,
+    -> productStatus tinyint);
+Query OK, 0 rows affected, 1 warning (0.06 sec)
+
+mysql> alter table products modify productCode varchar(50) unique not null;
+Query OK, 0 rows affected, 1 warning (0.11 sec)
+Records: 0  Duplicates: 0  Warnings: 1
+
+mysql> describe products;
++--------------------+--------------+------+-----+---------+----------------+
+| Field              | Type         | Null | Key | Default | Extra          |
++--------------------+--------------+------+-----+---------+----------------+
+| id                 | int          | NO   | PRI | NULL    | auto_increment |
+| productCode        | varchar(50)  | NO   | UNI | NULL    |                |
+| productName        | varchar(100) | NO   |     | NULL    |                |
+| productPrice       | int          | NO   |     | NULL    |                |
+| productAmount      | smallint     | NO   |     | NULL    |                |
+| productDescription | text         | YES  |     | NULL    |                |
+| productStatus      | tinyint      | YES  |     | NULL    |                |
++--------------------+--------------+------+-----+---------+----------------+
+7 rows in set (0.00 sec)
+
+mysql> insert into products(productcode,productName,productPrice,productAmount)
+    -> value (28997,'iPhone 11 Pro Max 64GB',29990,10),
+    -> (28998,'iPhone 11 Pro Max 256GB',35990,15),
+    -> (28999,'iPhone 11 Pro Max 512GB',43990,20),
+    -> (28994,'iPhone 11 Pro 64GB,27990,18),
+    '> ');
+ERROR 1136 (21S01): Column count doesn't match value count at row 4
+mysql> insert into products(productcode,productName,productPrice,productAmount)
+    ->  value (28997,'iPhone 11 Pro Max 64GB',29990,10),
+    -> (28998,'iPhone 11 Pro Max 256GB',35990,15),
+    -> (28999,'iPhone 11 Pro Max 512GB',43990,20),
+    ->  (28994,'iPhone 11 Pro 64GB',27990,18),
+    -> (28995,'iPhone 11 Pro 256GB',34190,10);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from  products;
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+| id | productCode | productName             | productPrice | productAmount | productDescription | productStatus |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+|  1 | 28997       | iPhone 11 Pro Max 64GB  |        29990 |            10 | NULL               |          NULL |
+|  2 | 28998       | iPhone 11 Pro Max 256GB |        35990 |            15 | NULL               |          NULL |
+|  3 | 28999       | iPhone 11 Pro Max 512GB |        43990 |            20 | NULL               |          NULL |
+|  4 | 28994       | iPhone 11 Pro 64GB      |        27990 |            18 | NULL               |          NULL |
+|  5 | 28995       | iPhone 11 Pro 256GB     |        34190 |            10 | NULL               |          NULL |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> explain select * from products;
++----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------+
+| id | select_type | table    | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra |
++----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------+
+|  1 | SIMPLE      | products | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    5 |   100.00 | NULL  |
++----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> create unique index idx_ProductCode
+    -> ON products(productCode);
+Query OK, 0 rows affected, 1 warning (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 1
+
+mysql> explain select * from products;
++----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------+
+| id | select_type | table    | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra |
++----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------+
+|  1 | SIMPLE      | products | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    5 |   100.00 | NULL  |
++----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> describe products;
++--------------------+--------------+------+-----+---------+----------------+
+| Field              | Type         | Null | Key | Default | Extra          |
++--------------------+--------------+------+-----+---------+----------------+
+| id                 | int          | NO   | PRI | NULL    | auto_increment |
+| productCode        | varchar(50)  | NO   | UNI | NULL    |                |
+| productName        | varchar(100) | NO   |     | NULL    |                |
+| productPrice       | int          | NO   |     | NULL    |                |
+| productAmount      | smallint     | NO   |     | NULL    |                |
+| productDescription | text         | YES  |     | NULL    |                |
+| productStatus      | tinyint      | YES  |     | NULL    |                |
++--------------------+--------------+------+-----+---------+----------------+
+7 rows in set (0.00 sec)
+
+mysql> explain select productCode, productName, productPrice from products;
++----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------+
+| id | select_type | table    | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra |
++----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------+
+|  1 | SIMPLE      | products | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    5 |   100.00 | NULL  |
++----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> explain select * from products where productCode ='28999';
++----+-------------+----------+------------+-------+-------------------------------------------+-------------+---------+-------+------+----------+-------+
+| id | select_type | table    | partitions | type  | possible_keys                             | key         | key_len | ref   | rows | filtered | Extra |
++----+-------------+----------+------------+-------+-------------------------------------------+-------------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | products | NULL       | const | productCode,productCode_2,idx_ProductCode | productCode | 202     | const |    1 |   100.00 | NULL  |
++----+-------------+----------+------------+-------+-------------------------------------------+-------------+---------+-------+------+----------+-------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> create index complix_idx
+    -> ON products(productName,productPrice);
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> select * from products;
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+| id | productCode | productName             | productPrice | productAmount | productDescription | productStatus |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+|  1 | 28997       | iPhone 11 Pro Max 64GB  |        29990 |            10 | NULL               |          NULL |
+|  2 | 28998       | iPhone 11 Pro Max 256GB |        35990 |            15 | NULL               |          NULL |
+|  3 | 28999       | iPhone 11 Pro Max 512GB |        43990 |            20 | NULL               |          NULL |
+|  4 | 28994       | iPhone 11 Pro 64GB      |        27990 |            18 | NULL               |          NULL |
+|  5 | 28995       | iPhone 11 Pro 256GB     |        34190 |            10 | NULL               |          NULL |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from products where productName ='iphone 11 pro 64gb' or productPrice = 29990;
++----+-------------+------------------------+--------------+---------------+--------------------+---------------+
+| id | productCode | productName            | productPrice | productAmount | productDescription | productStatus |
++----+-------------+------------------------+--------------+---------------+--------------------+---------------+
+|  1 | 28997       | iPhone 11 Pro Max 64GB |        29990 |            10 | NULL               |          NULL |
+|  4 | 28994       | iPhone 11 Pro 64GB     |        27990 |            18 | NULL               |          NULL |
++----+-------------+------------------------+--------------+---------------+--------------------+---------------+
+2 rows in set (0.00 sec)
+
+mysql> explain select * from products where productName ='iphone 11 pro 64gb' or productPrice = 29990;
++----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------------+
+| id | select_type | table    | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |
++----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------------+
+|  1 | SIMPLE      | products | NULL       | ALL  | complix_idx   | NULL | NULL    | NULL |    5 |    36.00 | Using where |
++----+-------------+----------+------------+------+---------------+------+---------+------+------+----------+-------------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> select * from products where productNam like 'iphone 11%' and productPrice = 29990;
+ERROR 1054 (42S22): Unknown column 'productNam' in 'where clause'
+mysql> select * from products where productName like 'iphone 11%' and productPrice = 29990;
++----+-------------+------------------------+--------------+---------------+--------------------+---------------+
+| id | productCode | productName            | productPrice | productAmount | productDescription | productStatus |
++----+-------------+------------------------+--------------+---------------+--------------------+---------------+
+|  1 | 28997       | iPhone 11 Pro Max 64GB |        29990 |            10 | NULL               |          NULL |
++----+-------------+------------------------+--------------+---------------+--------------------+---------------+
+1 row in set (0.00 sec)
+
+mysql> explain select * from products where productName like 'iphone 11%' and productPrice = 29990;
++----+-------------+----------+------------+-------+---------------+-------------+---------+------+------+----------+-----------------------+
+| id | select_type | table    | partitions | type  | possible_keys | key         | key_len | ref  | rows | filtered | Extra                 |
++----+-------------+----------+------------+-------+---------------+-------------+---------+------+------+----------+-----------------------+
+|  1 | SIMPLE      | products | NULL       | range | complix_idx   | complix_idx | 406     | NULL |    5 |    20.00 | Using index condition |
++----+-------------+----------+------------+-------+---------------+-------------+---------+------+------+----------+-----------------------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> create view code_view
+    -> AS select productCode from products;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create view name_view
+    -> AS select productName from products;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create view price_view
+    -> AS select productPrice from products;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create view status_view
+    -> AS select productStatus from products;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from code_view;
++-------------+
+| productCode |
++-------------+
+| 28994       |
+| 28995       |
+| 28997       |
+| 28998       |
+| 28999       |
++-------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from name_view;
++-------------------------+
+| productName             |
++-------------------------+
+| iPhone 11 Pro 256GB     |
+| iPhone 11 Pro 64GB      |
+| iPhone 11 Pro Max 256GB |
+| iPhone 11 Pro Max 512GB |
+| iPhone 11 Pro Max 64GB  |
++-------------------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from price_view;
++--------------+
+| productPrice |
++--------------+
+|        34190 |
+|        27990 |
+|        35990 |
+|        43990 |
+|        29990 |
++--------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from name_view, price_view;
++-------------------------+--------------+
+| productName             | productPrice |
++-------------------------+--------------+
+| iPhone 11 Pro 256GB     |        34190 |
+| iPhone 11 Pro 64GB      |        34190 |
+| iPhone 11 Pro Max 256GB |        34190 |
+| iPhone 11 Pro Max 512GB |        34190 |
+| iPhone 11 Pro Max 64GB  |        34190 |
+| iPhone 11 Pro 256GB     |        27990 |
+| iPhone 11 Pro 64GB      |        27990 |
+| iPhone 11 Pro Max 256GB |        27990 |
+| iPhone 11 Pro Max 512GB |        27990 |
+| iPhone 11 Pro Max 64GB  |        27990 |
+| iPhone 11 Pro 256GB     |        35990 |
+| iPhone 11 Pro 64GB      |        35990 |
+| iPhone 11 Pro Max 256GB |        35990 |
+| iPhone 11 Pro Max 512GB |        35990 |
+| iPhone 11 Pro Max 64GB  |        35990 |
+| iPhone 11 Pro 256GB     |        43990 |
+| iPhone 11 Pro 64GB      |        43990 |
+| iPhone 11 Pro Max 256GB |        43990 |
+| iPhone 11 Pro Max 512GB |        43990 |
+| iPhone 11 Pro Max 64GB  |        43990 |
+| iPhone 11 Pro 256GB     |        29990 |
+| iPhone 11 Pro 64GB      |        29990 |
+| iPhone 11 Pro Max 256GB |        29990 |
+| iPhone 11 Pro Max 512GB |        29990 |
+| iPhone 11 Pro Max 64GB  |        29990 |
++-------------------------+--------------+
+25 rows in set (0.00 sec)
+
+mysql> select * from status_view;
++---------------+
+| productStatus |
++---------------+
+|          NULL |
+|          NULL |
+|          NULL |
+|          NULL |
+|          NULL |
++---------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from price_view;
++--------------+
+| productPrice |
++--------------+
+|        34190 |
+|        27990 |
+|        35990 |
+|        43990 |
+|        29990 |
++--------------+
+5 rows in set (0.00 sec)
+
+mysql> drop view status_view;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from status_view;
+ERROR 1146 (42S02): Table 'demo.status_view' doesn't exist
+mysql> select * from products;
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+| id | productCode | productName             | productPrice | productAmount | productDescription | productStatus |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+|  1 | 28997       | iPhone 11 Pro Max 64GB  |        29990 |            10 | NULL               |          NULL |
+|  2 | 28998       | iPhone 11 Pro Max 256GB |        35990 |            15 | NULL               |          NULL |
+|  3 | 28999       | iPhone 11 Pro Max 512GB |        43990 |            20 | NULL               |          NULL |
+|  4 | 28994       | iPhone 11 Pro 64GB      |        27990 |            18 | NULL               |          NULL |
+|  5 | 28995       | iPhone 11 Pro 256GB     |        34190 |            10 | NULL               |          NULL |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> create or replace view price_view as
+    -> select productPrice, productName from products;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from price_view;
++--------------+-------------------------+
+| productPrice | productName             |
++--------------+-------------------------+
+|        34190 | iPhone 11 Pro 256GB     |
+|        27990 | iPhone 11 Pro 64GB      |
+|        35990 | iPhone 11 Pro Max 256GB |
+|        43990 | iPhone 11 Pro Max 512GB |
+|        29990 | iPhone 11 Pro Max 64GB  |
++--------------+-------------------------+
+5 rows in set (0.00 sec)
+
+mysql> create or replace view code_view as
+    -> select productCode, productname from products;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from code_view;
++-------------+-------------------------+
+| productCode | productname             |
++-------------+-------------------------+
+| 28997       | iPhone 11 Pro Max 64GB  |
+| 28998       | iPhone 11 Pro Max 256GB |
+| 28999       | iPhone 11 Pro Max 512GB |
+| 28994       | iPhone 11 Pro 64GB      |
+| 28995       | iPhone 11 Pro 256GB     |
++-------------+-------------------------+
+5 rows in set (0.00 sec)
+
+mysql> end of this day..................
+
+
+next day continue...................
+Microsoft Windows [Version 10.0.18363.836]
+(c) 2019 Microsoft Corporation. All rights reserved.
+
+C:\Users\Admin>mysql -u root -p
+Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 18
+Server version: 8.0.20 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| bank_accounts_mng  |
+| car_showroom       |
+| classicmodels      |
+| demo               |
+| information_schema |
+| librarymanager     |
+| mysql              |
+| performance_schema |
+| sakila             |
+| sys                |
+| testdatabase       |
+| world              |
++--------------------+
+12 rows in set (0.01 sec)
+
+mysql> use demo;
+Database changed
+mysql> show views;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'views' at line 1
+mysql> select* from code_view
+    -> ;
++-------------+-------------------------+
+| productCode | productname             |
++-------------+-------------------------+
+| 28997       | iPhone 11 Pro Max 64GB  |
+| 28998       | iPhone 11 Pro Max 256GB |
+| 28999       | iPhone 11 Pro Max 512GB |
+| 28994       | iPhone 11 Pro 64GB      |
+| 28995       | iPhone 11 Pro 256GB     |
++-------------+-------------------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from price_view;
++--------------+-------------------------+
+| productPrice | productName             |
++--------------+-------------------------+
+|        34190 | iPhone 11 Pro 256GB     |
+|        27990 | iPhone 11 Pro 64GB      |
+|        35990 | iPhone 11 Pro Max 256GB |
+|        43990 | iPhone 11 Pro Max 512GB |
+|        29990 | iPhone 11 Pro Max 64GB  |
++--------------+-------------------------+
+5 rows in set (0.00 sec)
+
+mysql> delimiter //
+mysql> create procedure showAll()
+    -> begin
+    -> select * from products;
+    -> end//
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> delimiter ;
+mysql> call showall();
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+| id | productCode | productName             | productPrice | productAmount | productDescription | productStatus |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+|  1 | 28997       | iPhone 11 Pro Max 64GB  |        29990 |            10 | NULL               |          NULL |
+|  2 | 28998       | iPhone 11 Pro Max 256GB |        35990 |            15 | NULL               |          NULL |
+|  3 | 28999       | iPhone 11 Pro Max 512GB |        43990 |            20 | NULL               |          NULL |
+|  4 | 28994       | iPhone 11 Pro 64GB      |        27990 |            18 | NULL               |          NULL |
+|  5 | 28995       | iPhone 11 Pro 256GB     |        34190 |            10 | NULL               |          NULL |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+5 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> show create procedure;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> show create procedure demo.products;
+ERROR 1305 (42000): PROCEDURE products does not exist
+mysql> describe products;
++--------------------+--------------+------+-----+---------+----------------+
+| Field              | Type         | Null | Key | Default | Extra          |
++--------------------+--------------+------+-----+---------+----------------+
+| id                 | int          | NO   | PRI | NULL    | auto_increment |
+| productCode        | varchar(50)  | NO   | UNI | NULL    |                |
+| productName        | varchar(100) | NO   | MUL | NULL    |                |
+| productPrice       | int          | NO   |     | NULL    |                |
+| productAmount      | smallint     | NO   |     | NULL    |                |
+| productDescription | text         | YES  |     | NULL    |                |
+| productStatus      | tinyint      | YES  |     | NULL    |                |
++--------------------+--------------+------+-----+---------+----------------+
+7 rows in set (0.00 sec)
+
+mysql> delimiter //
+mysql> create procedure deteteByID(
+    -> IN inputID int)
+    -> BEGIN
+    -> alter table products drop column where id = inputID;
+    -> end//
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where id = inputID;
+end' at line 4
+mysql> create procedure deleteById
+    -> (IN inputID int)
+    -> begin
+    -> delete from products where id = inputID;
+    -> end//
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> delimiter ;
+mysql> call showAll();
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+| id | productCode | productName             | productPrice | productAmount | productDescription | productStatus |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+|  1 | 28997       | iPhone 11 Pro Max 64GB  |        29990 |            10 | NULL               |          NULL |
+|  2 | 28998       | iPhone 11 Pro Max 256GB |        35990 |            15 | NULL               |          NULL |
+|  3 | 28999       | iPhone 11 Pro Max 512GB |        43990 |            20 | NULL               |          NULL |
+|  4 | 28994       | iPhone 11 Pro 64GB      |        27990 |            18 | NULL               |          NULL |
+|  5 | 28995       | iPhone 11 Pro 256GB     |        34190 |            10 | NULL               |          NULL |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+5 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> insert into products(productCode, productName, productPrice, productAmount) value
+    -> (1279,'bphone b86',8999,10);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> call showall();
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+| id | productCode | productName             | productPrice | productAmount | productDescription | productStatus |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+|  1 | 28997       | iPhone 11 Pro Max 64GB  |        29990 |            10 | NULL               |          NULL |
+|  2 | 28998       | iPhone 11 Pro Max 256GB |        35990 |            15 | NULL               |          NULL |
+|  3 | 28999       | iPhone 11 Pro Max 512GB |        43990 |            20 | NULL               |          NULL |
+|  4 | 28994       | iPhone 11 Pro 64GB      |        27990 |            18 | NULL               |          NULL |
+|  5 | 28995       | iPhone 11 Pro 256GB     |        34190 |            10 | NULL               |          NULL |
+|  6 | 1279        | bphone b86              |         8999 |            10 | NULL               |          NULL |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+6 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> call deleteById(6);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> call showall();
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+| id | productCode | productName             | productPrice | productAmount | productDescription | productStatus |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+|  1 | 28997       | iPhone 11 Pro Max 64GB  |        29990 |            10 | NULL               |          NULL |
+|  2 | 28998       | iPhone 11 Pro Max 256GB |        35990 |            15 | NULL               |          NULL |
+|  3 | 28999       | iPhone 11 Pro Max 512GB |        43990 |            20 | NULL               |          NULL |
+|  4 | 28994       | iPhone 11 Pro 64GB      |        27990 |            18 | NULL               |          NULL |
+|  5 | 28995       | iPhone 11 Pro 256GB     |        34190 |            10 | NULL               |          NULL |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+5 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> delimiter //
+mysql> create procedure addProduct(
+    -> IN code varchar(50),
+    ->
+    -> IN name varchar(100),
+    -> IN price int,
+    -> IN amount smallInt)
+    -> insert into products(productCode,productName,productPrice,productAmount)
+    -> value(code,name,price,amount);
+    -> end//
+Query OK, 0 rows affected (0.01 sec)
+
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'end' at line 1
+mysql> delimiter ;
+mysql> call addproduct(1234,'bphone b86',8900,15);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> call showall();
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+| id | productCode | productName             | productPrice | productAmount | productDescription | productStatus |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+|  1 | 28997       | iPhone 11 Pro Max 64GB  |        29990 |            10 | NULL               |          NULL |
+|  2 | 28998       | iPhone 11 Pro Max 256GB |        35990 |            15 | NULL               |          NULL |
+|  3 | 28999       | iPhone 11 Pro Max 512GB |        43990 |            20 | NULL               |          NULL |
+|  4 | 28994       | iPhone 11 Pro 64GB      |        27990 |            18 | NULL               |          NULL |
+|  5 | 28995       | iPhone 11 Pro 256GB     |        34190 |            10 | NULL               |          NULL |
+|  7 | 1234        | bphone b86              |         8900 |            15 | NULL               |          NULL |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+6 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> delimiter //
+mysql> create procedure editById(
+    -> IN id int,
+    -> IN code varchar(50),
+    -> in name varchar(100),
+    -> in price int,
+    -> in amount smallint)
+    -> begin
+    -> update products
+    -> set productcode = code, productName = name, productprice = price, productAmount = amount
+    -> Where id = id;
+    -> end//
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call editbyid(7,9999,'samsung s20 elite',31000,8);
+    -> //
+ERROR 1062 (23000): Duplicate entry '9999' for key 'products.productCode'
+mysql> delimiter ;
+mysql> call editbyid(7,9979,'samsung s20 elite',31000,8);
+ERROR 1062 (23000): Duplicate entry '9979' for key 'products.productCode'
+mysql> call showall();
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+| id | productCode | productName             | productPrice | productAmount | productDescription | productStatus |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+|  1 | 28997       | iPhone 11 Pro Max 64GB  |        29990 |            10 | NULL               |          NULL |
+|  2 | 28998       | iPhone 11 Pro Max 256GB |        35990 |            15 | NULL               |          NULL |
+|  3 | 28999       | iPhone 11 Pro Max 512GB |        43990 |            20 | NULL               |          NULL |
+|  4 | 28994       | iPhone 11 Pro 64GB      |        27990 |            18 | NULL               |          NULL |
+|  5 | 28995       | iPhone 11 Pro 256GB     |        34190 |            10 | NULL               |          NULL |
+|  7 | 1234        | bphone b86              |         8900 |            15 | NULL               |          NULL |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+6 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> call editbyid(7,8888,'samsung s20 elite',31000,8);
+ERROR 1062 (23000): Duplicate entry '8888' for key 'products.productCode'
+mysql> drop procedure editbyid;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> update products
+    -> set productCode = 7777,productName ='Test Phone'
+    -> where id = 7;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> call showall();
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+| id | productCode | productName             | productPrice | productAmount | productDescription | productStatus |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+|  1 | 28997       | iPhone 11 Pro Max 64GB  |        29990 |            10 | NULL               |          NULL |
+|  2 | 28998       | iPhone 11 Pro Max 256GB |        35990 |            15 | NULL               |          NULL |
+|  3 | 28999       | iPhone 11 Pro Max 512GB |        43990 |            20 | NULL               |          NULL |
+|  4 | 28994       | iPhone 11 Pro 64GB      |        27990 |            18 | NULL               |          NULL |
+|  5 | 28995       | iPhone 11 Pro 256GB     |        34190 |            10 | NULL               |          NULL |
+|  7 | 7777        | Test Phone              |         8900 |            15 | NULL               |          NULL |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+6 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> delimiter //
+mysql> create procedure editbyID(
+    -> IN inputID int,
+    -> IN newcode varchar(50),
+    -> IN newName varchar(100),
+    -> IN newprice int,
+    -> IN newamount smallint)
+    -> Begin
+    -> update products
+    -> SET productCode = newcode,productName = newName,productPrice = newPrice,productAmount = newamount
+    -> WHERE id = inputID;
+    -> END//
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call editbyID(7,8888,'sam sung s20',32000,8)//
+Query OK, 1 row affected (0.01 sec)
+
+mysql> delimiter ;
+mysql> call showall();
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+| id | productCode | productName             | productPrice | productAmount | productDescription | productStatus |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+|  1 | 28997       | iPhone 11 Pro Max 64GB  |        29990 |            10 | NULL               |          NULL |
+|  2 | 28998       | iPhone 11 Pro Max 256GB |        35990 |            15 | NULL               |          NULL |
+|  3 | 28999       | iPhone 11 Pro Max 512GB |        43990 |            20 | NULL               |          NULL |
+|  4 | 28994       | iPhone 11 Pro 64GB      |        27990 |            18 | NULL               |          NULL |
+|  5 | 28995       | iPhone 11 Pro 256GB     |        34190 |            10 | NULL               |          NULL |
+|  7 | 8888        | sam sung s20            |        32000 |             8 | NULL               |          NULL |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+6 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> call editbyID(8,8889,'sam sung s20',32000,8);
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call showall();
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+| id | productCode | productName             | productPrice | productAmount | productDescription | productStatus |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+|  1 | 28997       | iPhone 11 Pro Max 64GB  |        29990 |            10 | NULL               |          NULL |
+|  2 | 28998       | iPhone 11 Pro Max 256GB |        35990 |            15 | NULL               |          NULL |
+|  3 | 28999       | iPhone 11 Pro Max 512GB |        43990 |            20 | NULL               |          NULL |
+|  4 | 28994       | iPhone 11 Pro 64GB      |        27990 |            18 | NULL               |          NULL |
+|  5 | 28995       | iPhone 11 Pro 256GB     |        34190 |            10 | NULL               |          NULL |
+|  7 | 8888        | sam sung s20            |        32000 |             8 | NULL               |          NULL |
++----+-------------+-------------------------+--------------+---------------+--------------------+---------------+
+6 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.04 sec)
+
+mysql>
